@@ -1,9 +1,28 @@
 // Función para generar el formulario de registro dinámicamente
 
 function generarRegister() {
-    //si existia algo de antes lo borro
-    document.body.innerHTML="";
 
+
+
+
+    //si existia algo de antes lo borro
+    document.body.innerHTML = "";
+    //creo el contenedor
+    let contenedorDiv = document.createElement('div');
+    contenedorDiv.id = 'contenedor';
+
+
+    contenedorDiv.style.margin = '0';
+    contenedorDiv.style.padding = '0';
+    contenedorDiv.style.background = 'url("/public/nube.png") no-repeat center center fixed';
+    contenedorDiv.style.backgroundSize = 'cover';
+    contenedorDiv.style.height = '100vh';
+    contenedorDiv.style.display = 'flex';
+    contenedorDiv.style.justifyContent = 'center';
+    contenedorDiv.style.alignItems = 'center';
+    
+    document.body.appendChild(contenedorDiv);
+    
     // Crear el elemento div
     let formularioDiv = document.createElement('div');
 
@@ -11,7 +30,7 @@ function generarRegister() {
     formularioDiv.id = 'formulario';
 
     // Agregar el div al cuerpo de la página
-    document.body.appendChild(formularioDiv);
+    contenedorDiv.appendChild(formularioDiv);
 
     let formularioContainer = document.getElementById('formulario');
 
@@ -42,6 +61,7 @@ function generarRegister() {
 
     let botonEnviar = document.createElement('button');
     botonEnviar.setAttribute('type', 'submit');
+    botonEnviar.setAttribute('id', 'botonEnviar');
     botonEnviar.textContent = 'Registrarse';
 
 
@@ -72,15 +92,15 @@ function generarRegister() {
     botonIniSesion.onclick = function () {
         // Llamar a la función definida en login.js
         if (typeof generarLogin === 'function') {
-            document.body.innerHTML="";
-            
+            document.body.innerHTML = "";
+
             generarLogin();
         } else {
             console.error("La función de login no está definida.");
         }
     };
 
-    document.body.appendChild(botonIniSesion);
+    contenedorDiv.appendChild(botonIniSesion);
 
     // Manejar el evento de envío del formulario
     formulario.addEventListener('submit', function (event) {
@@ -89,6 +109,7 @@ function generarRegister() {
         let nombre = inputNombre.value;
         let email = inputEmail.value;
         let contrasena = inputContrasena.value;
+        botonEnviar.disabled = true;
         registro(nombre, email, contrasena);
 
         // Aquí puedes agregar lógica para procesar el formulario, por ejemplo, enviar datos a un servidor.
@@ -97,11 +118,15 @@ function generarRegister() {
         // Puedes acceder a los valores del formulario con: inputNombre.value, inputEmail.value, inputContraseña.value
         console.log('Formulario enviado');
     });
+
+    
 }
 
 async function registro(nombre, email, contrasena) {
+    // Obtén la URL actual del navegador
+    var urlActual = (new URL(window.location.origin)).hostname;
     try {
-        let respuesta = await fetch("http://localhost:8082/api/signup", {
+        let respuesta = await fetch("http://" + urlActual + ":8082/api/auth/signup", {
             method: "POST",
             body: JSON.stringify({
                 name: nombre,
@@ -110,6 +135,7 @@ async function registro(nombre, email, contrasena) {
             }),
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
+
             }
         });
 
@@ -123,12 +149,10 @@ async function registro(nombre, email, contrasena) {
         } else {
             // Ha fallado el registro
             console.error('Error al registrarse:', data["message"]);
+            document.getElementById("botonEnviar").disabled = false;
         }
     } catch (error) {
         console.error(error);
     }
 }
-
-
-
 

@@ -1,16 +1,24 @@
+@font-face {
+    font-family: Roboto3;
+    src: url(Roboto-Bold.ttf);
+    src: url(Roboto-Bold.woff);
+}
+
+*{
+    font-family: 'Lucida Sans', 'Lucida Sans Regular',
+     'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+     margin: 0;
+     padding: 0;
+     font-family: Roboto3;
+}
 body {
     margin: 0;
     padding: 0;
-    background: url('http://localhost:8080/public/nube.png') no-repeat center center fixed;
-    background-size: cover;
     height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 #formulario {
-    background-color: rgba(141, 141, 141, 0.8);
+    background-color: rgba(235, 235, 235, 0.164);
     /* Fondo semi-transparente blanco */
     padding: 20px;
     border-radius: 10px;
@@ -27,21 +35,169 @@ label {
     margin-bottom: 10px;
 }
 
-input {
-    padding: 8px;
-    margin-bottom: 15px;
-}
-
 button {
     padding: 10px;
-    background-color: #4caf50;
+    background-color: #005fb8a6;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
     color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
 }
-#botonRGST-LGN{
+
+#botonRGST-LGN {
     position: fixed;
-    top:1px;
+    top: 1px;
     left: 1px;
+}
+
+/* Estilo mejorado para inputs de texto */
+input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 2px solid #3498db;
+    border-radius: 5px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    color: #333;
+    font-size: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+input[type="text"]:focus {
+    border-color: #2c3e50;
+    box-shadow: 0 0 8px rgba(44, 62, 80, 0.6);
+    outline: none;
+}
+
+input[type="text"]::placeholder {
+    color: #aaa;
+}
+
+input[type="text"]:hover {
+    border-color: #2980b9;
+}
+
+/* Estilo para inputs de correo electrónico */
+input[type="email"] {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 2px solid #27ae60;
+    border-radius: 5px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    color: #333;
+    font-size: 16px;
+}
+
+input[type="email"]:focus {
+    border-color: #2ecc71;
+    box-shadow: 0 0 8px rgba(39, 174, 96, 0.6);
+    outline: none;
+}
+
+input[type="email"]::placeholder {
+    color: #aaa;
+}
+
+input[type="email"]:hover {
+    border-color: #219d5f;
+}
+
+/* Estilo para inputs de contraseña */
+input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 2px solid #3498db;
+    border-radius: 5px;
+    background-color: #ecf0f1;
+    transition: ease-in 0.3s;
+    color: #333;
+    font-size: 16px;
+}
+
+input[type="password"]:focus {
+    border: 5px solid #153b55;
+    padding: 8px;
+    border-radius: 0px;
+    background-color: #fff;
+    outline: none;
+}
+
+input[type="password"]::placeholder {
+    color: #aaa;
+}
+
+input[type="password"]:hover {
+    border-color: #2980b9;
+}
+
+/* Estilo para mapa */
+#mapid {
+    position: absolute;
+    margin: 0;
+    top: 10vh;
+    width: 100vw;
+    height: 50vh;
+}
+.huechange:active {
+    filter: hue-rotate(100deg);
+}
+
+/*Estilo para espacio de cartas*/
+#espacioCartas{
+    position: absolute;
+    background-color: #d8d8d8;
+    margin: 0;
+    top: 60vh;
+    width: 100vw;
+    height: 30vh;
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 20px;
+    border-bottom: 2px solid #333; /* Borde superior sólido */
+    box-shadow: inset 0px 3px 42px 43px rgba(78, 104, 129, 0.75);
+}
+
+#espacioCartas .cartas p{
+    display:block;
+}
+
+#espacioCartas .cartas #descricion{
+    display:none;
+}
+
+#descricion{
+    display:block;
+}
+.cartas {
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    padding: 20px;
+    color: #333;
+    cursor: grab; /* Cambiar el cursor al hacer clic para arrastrar */
+    user-select: none; /* Evitar la selección de texto al arrastrar */
+    cursor: grab; /* Cambiar el cursor al hacer clic para arrastrar */
+    user-select: none; /* Evitar la selección de texto al arrastrar */
+    overflow-y: auto;
+    margin: 2px;
+    max-width: 400px;
+    white-space:wrap;
+}
+
+.cartas h2 {
+    color: #005c45;
+}
+
+.cartas p {
+    color: #666;
+    display: none;
 }

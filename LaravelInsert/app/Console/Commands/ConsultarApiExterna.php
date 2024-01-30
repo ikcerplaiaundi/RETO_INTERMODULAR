@@ -4,8 +4,10 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use GuzzleHttp\Client;
+use Carbon\Carbon;
 use App\Models\Provincia;
 use App\Models\Municipio;
+use App\Models\Measurement;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
 
@@ -78,16 +80,16 @@ class ConsultarApiExterna extends Command
     }
     private function consultarMunicipiosPorProvincia($provincia)
     {
-        
+
 
         try {
-            Log::info('deja d llorar'. $provincia->CODPROV);
+
             $response = Http::get('https://www.el-tiempo.net/api/json/v2/provincias/' . $provincia->CODPROV . '/municipios');
             $data = json_decode($response->getBody(), true);
 
             // Guardar todos los municipios de la provincia en la base de datos
             foreach ($data['municipios'] as $municipioData) {
-                
+
                 Municipio::updateOrCreate(
                     ['CODIGOINE' => $municipioData['CODIGOINE']],
                     [
@@ -112,9 +114,9 @@ class ConsultarApiExterna extends Command
                         'LONGITUD_ETRS89_REGCAN95' => $municipioData['LONGITUD_ETRS89_REGCAN95'],
                         'LATITUD_ETRS89_REGCAN95' => $municipioData['LATITUD_ETRS89_REGCAN95'],
                         'ORIGEN_COORD' => $municipioData['ORIGEN_COORD'],
-                        'ALTITUD' => $municipioData['ORIGEN_COORD'],
+                        'ALTITUD' => $municipioData['ALTITUD'],
                         'ORIGEN_ALTITUD' => $municipioData['ORIGEN_ALTITUD'],
-                        'DISCREPANTE_INE' => $municipioData['ORIGEN_COORD'],
+                        'DISCREPANTE_INE' => $municipioData['DISCREPANTE_INE'],
                         'humedad_relativa' => 0,
                         'orto' => "08:35",
                         'ocaso' => "18:07",
@@ -165,4 +167,6 @@ class ConsultarApiExterna extends Command
             }
         }
     }
+
+
 }

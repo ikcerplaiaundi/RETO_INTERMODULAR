@@ -1,8 +1,25 @@
 // Función para generar el formulario de login dinámicamente
-function generarLogin(){
+function generarLogin() {
+
     //si existia algo de antes lo borro
-    document.body.innerHTML="";
-    
+    document.body.innerHTML = "";
+    //creo el contenedor
+    let contenedorDiv = document.createElement('div');
+    contenedorDiv.id = 'contenedor';
+
+
+    // Aplicar estilos al body
+    contenedorDiv.style.margin = '0';
+    contenedorDiv.style.padding = '0';
+    contenedorDiv.style.background = 'url("/public/nube.png") no-repeat center center fixed';
+    contenedorDiv.style.backgroundSize = 'cover';
+    contenedorDiv.style.height = '100vh';
+    contenedorDiv.style.display = 'flex';
+    contenedorDiv.style.justifyContent = 'center';
+    contenedorDiv.style.alignItems = 'center';
+
+    document.body.appendChild(contenedorDiv);
+
     // Crear el elemento div
     let formularioDiv = document.createElement('div');
 
@@ -10,7 +27,7 @@ function generarLogin(){
     formularioDiv.id = 'formulario';
 
     // Agregar el div al cuerpo de la página
-    document.body.appendChild(formularioDiv);
+    contenedorDiv.appendChild(formularioDiv);
 
     let formularioContainer = document.getElementById('formulario');
 
@@ -34,6 +51,7 @@ function generarLogin(){
 
     let botonEnviar = document.createElement('button');
     botonEnviar.setAttribute('type', 'submit');
+    botonEnviar.setAttribute('id', 'botonEnviar');
     botonEnviar.textContent = 'Entrar';
 
     let botonRegistrarse = document.createElement("button");
@@ -44,11 +62,12 @@ function generarLogin(){
         // Llamar a la función definida en login.js
         if (typeof generarRegister === 'function') {
             generarRegister();
+
         } else {
             console.error("La función de login no está definida. generarRegister");
         }
     };
-    document.body.appendChild(botonRegistrarse);
+    contenedorDiv.appendChild(botonRegistrarse);
 
     // Agregar elementos al formulario
     formulario.appendChild(labelEmail);
@@ -63,15 +82,18 @@ function generarLogin(){
 
     // Agregar formulario al contenedor
     formularioContainer.appendChild(formulario);
-        
+
     // Manejar el evento de envío del formulario
     formulario.addEventListener('submit', function (event) {
         event.preventDefault();
         // Obtener los valores del formulario
-        
+
         let email = inputEmail.value;
         let contrasena = inputContrasena.value;
+        botonEnviar.disabled = true;
         login(email, contrasena);
+        botonEnviar.disabled = false;
+
 
         // Aquí puedes agregar lógica para procesar el formulario, por ejemplo, enviar datos a un servidor.
         //document.body.removeChild(formularioDiv);
@@ -79,16 +101,21 @@ function generarLogin(){
         // Puedes acceder a los valores del formulario con: inputNombre.value, inputEmail.value, inputContraseña.value
         console.log('Formulario enviado');
     });
+
+
 }
 
 async function login(email, contrasena) {
+    // Obtén la URL actual del navegador
+    var urlActual = (new URL(window.location.origin)).hostname;
     try {
-        let respuesta = await fetch("http://localhost:8082/api/login", {
+
+        let respuesta = await fetch("http://" + urlActual + ":8082/api/auth/login", {
             method: "POST",
             body: JSON.stringify({
                 email: email,
                 password: contrasena,
-                remember_me: 0
+                remember_me: 1
             }),
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
@@ -96,55 +123,58 @@ async function login(email, contrasena) {
         });
 
         let data = await respuesta.json();
-        console.log(data);
+
 
         if (data["message"] === 'Unauthorized') {
-            
+
             console.error('Error al registrarse:');
+            document.getElementById("botonEnviar").disabled = false;
         } else {
-            // Registro exitoso
-            document.body.innerHTML="";
-            generarMapa(data)
-            
+            //funciona
+            //guanda el token
+            sessionStorage.setItem('accessToken', data.access_token.accessToken);
+            //monta la spa
+            document.body.innerHTML = "";
+            if (typeof generarMapa === 'function') {
+                generarMapa();
+            } else {
+                console.error("La función generarMapa no está definida.");
+            }
+            if (typeof generarEspacioCartas === 'function') {
+                generarEspacioCartas();
+            } else {
+                console.error("La función generarEspacioCartas no está definida.");
+            }
+
         }
     } catch (error) {
         console.error(error);
     }
 }
-async function cerarSesion2(dataJson){
-    console.log(dataJson[1][2]);
-    try {
-        let respuesta = await fetch("http://localhost:8082/api/logout", {
-            method: "POST",
-            headers: {
-                "Authorization": "Bearer " + dataJson[access_token][plainTextToken],
-                "Content-type": "application/json; charset=UTF-8"
-            }
-        });
 
-        let data = await respuesta.json();
-        console.log(data);
-
-        if (respuesta.status === 200) {
-            // Logout exitoso
-            console.log('Logout exitoso');
-        } else {
-            // Manejar errores
-            console.error('Error al hacer logout:', data.message);
-        }
-    } catch (error) {
-        console.error('Error en la solicitud de logout:', error);
+async function cerrarSesion() {
+    var urlActual = (new URL(window.location.origin)).hostname;
+    let config = {
+        method: 'Get',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        },
     }
+    fetch("http://" + urlActual + ":8082/api/auth/logout", config)
 }
 
-async function cerrarSesion(dataJson) {
-    try {
-        let accessToken = dataJson.access_token.accessToken.plainTextToken;
 
-        let respuesta = await fetch("http://localhost:8082/api/logout", {
-            method: "POST",
+async function cerrarSesion2() {
+    // Obtén la URL actual del navegador
+    var urlActual = (new URL(window.location.origin)).hostname;
+    try {
+        let accessToken = sessionStorage.getItem('accessToken');
+
+        let respuesta = await fetch("http://" + urlActual + ":8082/api/auth/logout", {
+            method: "GET",
             headers: {
-                "Authorization": "Bearer " + accessToken,
+                "Authorization": "Bearer " + sessionStorage.getItem("accesToken"),
                 "Content-type": "application/json; charset=UTF-8"
             }
         });
@@ -153,6 +183,8 @@ async function cerrarSesion(dataJson) {
         console.log(data);
 
         if (respuesta.status === 200) {
+
+
             // Logout exitoso
             console.log('Logout exitoso');
         } else {

@@ -16,11 +16,10 @@ class Kernel extends ConsoleKernel
      * Define the application's command schedule.
      */
     protected function schedule(Schedule $schedule): void
-    {
-        $schedule->exec('php artisan app:consultar-api-externa')->everyFiveSeconds();
-
-        $schedule->command('app:generar-datos-municipio')->everyMinute();
-        $schedule->command('app:consultar-api-externa')->everyFifteenMinutes();
+    {     //->everyFifteenMinutes() everyTenMinutes();;
+        $schedule->exec('php artisan app:consultar-api-externa')->everyTwentySeconds();
+        $schedule->exec('php artisan app:generar-datos-municipio')->everyFiveSeconds();
+        $schedule->exec('php artisan app:consultar-api-mediciones')->everyFiveSeconds();
     }
 
     /**
@@ -28,7 +27,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands(): void
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

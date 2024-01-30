@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Facade;
 
 return new class extends Migration
 {
@@ -15,8 +16,6 @@ return new class extends Migration
           if (!Schema::hasTable('measurements')) {
             Schema::create('measurements', function (Blueprint $table) {
                 $table->id();
-
-                // Campos relacionados con el municipio (puedes ajustar esto según tus necesidades)
                 $table->string('CODIGOINE');
                 $table->string('ID_REL');
                 $table->string('COD_GEO');
@@ -36,8 +35,8 @@ return new class extends Migration
                 $table->integer('ALTITUD');
                 $table->string('ORIGEN_ALTITUD');
                 $table->integer('DISCREPANTE_INE');
-
-                // Nuevos campos de mediciones
+    
+                // Nuevos campos
                 $table->integer('humedad_relativa');
                 $table->string('orto');
                 $table->string('ocaso');
@@ -46,7 +45,7 @@ return new class extends Migration
                 $table->integer('temperatura_max');
                 
                 // Atributo de fecha
-                $table->date('fecha');
+                $table->dateTime('fecha');//->default(DB::raw('CURRENT_TIMESTAMP'));
                 $table->timestamps();
             });
         }

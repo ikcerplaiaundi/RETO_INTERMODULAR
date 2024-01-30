@@ -9,7 +9,7 @@ class MunicipioController extends Controller
     public function index()
     {
         $municipios = Municipio::all();
-        return view('municipios.index', compact('municipios'));
+        return response()->json($municipios);
     }
 
     public function create()
