@@ -7,6 +7,24 @@ function generarRegister() {
 
     //si existia algo de antes lo borro
     document.body.innerHTML = "";
+
+    //Genera logo//////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Crear un nuevo elemento de imagen
+    var logo = document.createElement('img');
+
+    // Establecer la ruta de la imagen
+    logo.src = 'public/logo.png'; // Reemplaza 'ruta/al/logo.png' con la ruta de tu logo
+
+    // Establecer el tamaño del logo
+    logo.style.width = '40px';
+    logo.style.height = '40px';
+    logo.style.backgroundSize='40px';
+    // Establecer la posición fija (fixed) en la esquina superior derecha
+    logo.style.position = 'fixed';
+    logo.style.top = '15px';
+    logo.style.right = '15px';
+
+
     //creo el contenedor
     let contenedorDiv = document.createElement('div');
     contenedorDiv.id = 'contenedor';

@@ -1,10 +1,26 @@
 // Función para generar el formulario de login dinámicamente
 function generarLogin(mensage) {
-    
+
     //si existia algo de antes lo borro
     document.body.innerHTML = "";
+    //Genera logo//////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Crear un nuevo elemento de imagen
+    var logo = document.createElement('img');
 
-    if(mensage !== 'undefined'){
+    // Establecer la ruta de la imagen
+    logo.src = 'public/logo.png'; // Reemplaza 'ruta/al/logo.png' con la ruta de tu logo
+
+    // Establecer el tamaño del logo
+    logo.style.width = '40px';
+    logo.style.height = '40px';
+
+    // Establecer la posición fija (fixed) en la esquina superior derecha
+    logo.style.position = 'fixed';
+    logo.style.top = '15px';
+    logo.style.right = '15px';
+
+
+    if (mensage !== 'undefined') {
         parrafo = document.createElement('p');
         parrafo.setAttribute('id', 'mensageLOG');
         parrafo.textContent = mensage;
@@ -102,9 +118,9 @@ function generarLogin(mensage) {
         // Llamar a la función definida en public\animacionDeCarga.js
         if (typeof cargaCanvasAnimation === 'function') {
             botonEnviar.textContent = '';
-            
+
             botonEnviar.disabled = true;
-            
+
             login(email, contrasena);
             cargaCanvasAnimation(document.body);
             botonEnviar.disabled = false;
@@ -146,11 +162,11 @@ async function login(email, contrasena) {
 
 
         if (data["message"] === 'Unauthorized') {
-            generarLogin('Error al log: '+data["message"]);
-            console.error('Error al registrarse:');
+            generarLogin('Error al log: usuario o contraseña incorrectas');
+            console.error('Error al registrarse:'+ data["message"]);
             document.getElementById("botonEnviar").disabled = false;
         } else {
-            
+
             //funciona
             //guanda el token
             sessionStorage.setItem('accessToken', data.access_token.accessToken);
@@ -159,7 +175,7 @@ async function login(email, contrasena) {
             if (typeof generarMapa === 'function') {
                 generarMapa();
             } else {
-                
+
                 console.error("La función generarMapa no está definida.");
             }
             if (typeof generarEspacioCartas === 'function') {
