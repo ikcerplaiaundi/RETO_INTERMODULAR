@@ -17,7 +17,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {     //->everyFifteenMinutes() everyTenMinutes();;
-        $schedule->exec('php artisan app:consultar-api-externa')->everyTwentySeconds();
+        $schedule->exec('php artisan app:consultar-api-externa')->everyFifteenMinutes();
         $schedule->exec('php artisan app:generar-datos-municipio')->everyFiveSeconds();
         $schedule->exec('php artisan app:consultar-api-mediciones')->everyFiveSeconds();
     }

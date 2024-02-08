@@ -1,8 +1,16 @@
 // Función para generar el formulario de login dinámicamente
-function generarLogin() {
-
+function generarLogin(mensage) {
+    
     //si existia algo de antes lo borro
     document.body.innerHTML = "";
+
+    if(mensage !== 'undefined'){
+        parrafo = document.createElement('p');
+        parrafo.setAttribute('id', 'mensageLOG');
+        parrafo.textContent = mensage;
+        document.body.appendChild(parrafo);
+    }
+
     //creo el contenedor
     let contenedorDiv = document.createElement('div');
     contenedorDiv.id = 'contenedor';
@@ -90,9 +98,21 @@ function generarLogin() {
 
         let email = inputEmail.value;
         let contrasena = inputContrasena.value;
-        botonEnviar.disabled = true;
-        login(email, contrasena);
-        botonEnviar.disabled = false;
+
+        // Llamar a la función definida en public\animacionDeCarga.js
+        if (typeof cargaCanvasAnimation === 'function') {
+            botonEnviar.textContent = '';
+            
+            botonEnviar.disabled = true;
+            
+            login(email, contrasena);
+            cargaCanvasAnimation(document.body);
+            botonEnviar.disabled = false;
+            botonEnviar.textContent = 'Entrar';
+        } else {
+            console.error("La función cargaCanvasAnimation no está definida.");
+        }
+
 
 
         // Aquí puedes agregar lógica para procesar el formulario, por ejemplo, enviar datos a un servidor.
@@ -126,10 +146,11 @@ async function login(email, contrasena) {
 
 
         if (data["message"] === 'Unauthorized') {
-
+            generarLogin('Error al log: '+data["message"]);
             console.error('Error al registrarse:');
             document.getElementById("botonEnviar").disabled = false;
         } else {
+            
             //funciona
             //guanda el token
             sessionStorage.setItem('accessToken', data.access_token.accessToken);
@@ -138,6 +159,7 @@ async function login(email, contrasena) {
             if (typeof generarMapa === 'function') {
                 generarMapa();
             } else {
+                
                 console.error("La función generarMapa no está definida.");
             }
             if (typeof generarEspacioCartas === 'function') {

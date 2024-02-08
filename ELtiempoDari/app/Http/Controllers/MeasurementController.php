@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Measurement;
-
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 class MeasurementController extends Controller
 {
     public function filter(Request $request)
@@ -22,6 +24,28 @@ class MeasurementController extends Controller
 
         // Puedes devolver las mediciones filtradas a una vista o realizar otra acción según tus necesidades
         return view('measurements.filtered', compact('measurements'));
+    }
+    public function filterBetweenData(Request $request)
+    {
+        // Validar la entrada del usuario
+        $request->validate([
+            'nombre_municipio' => 'required|string',
+            'fecha_inicio' => 'required|date',
+            'fecha_fin' => 'required|date',
+        ]);
+
+        $nombreMunicipio = $request->input('nombre_municipio');
+        $fechaInicio = $request->input('fecha_inicio');
+        $fechaFin = $request->input('fecha_fin');
+
+        // Construir la consulta utilizando Eloquent
+        $query = Measurement::where('NOMBRE', $nombreMunicipio)
+        ->whereBetween('fecha', [$fechaInicio, $fechaFin])
+        ->get();
+        
+        Log::info("resultado :   ". $fechaInicio);
+        // Retornar los resultados en formato JSON
+        return response()->json($query);
     }
     public function index()
     {

@@ -1,29 +1,28 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Factories;
 
 use App\Models\Measurement;
 use App\Models\Municipio;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Faker\Factory as Faker;
-use Illuminate\Support\Facades\Log;
-
-class DatabaseSeeder extends Seeder
+class MeasurementFactory extends Factory
 {
     /**
-     * Seed the application's database.
+     * Define the model's default state.
+     *
+     * @return array
      */
-    public function run()
-    {
-        
+    public function definition()
+    {   
         // Obtener la fecha límite y la fecha actual
-        $fechaLimite = Carbon::parse('2023-01-20');
+        $fechaLimite = Carbon::parse('2024-01-01');
         $fechaActual = now();
 
         // Arreglo para almacenar los datos de los municipios
         $measurementData = [];
+
 
         // Iterar sobre cada día entre la fecha límite y la fecha actual
         $fecha = clone $fechaLimite;
@@ -33,8 +32,7 @@ class DatabaseSeeder extends Seeder
 
             // Iterar sobre cada municipio y crear un registro de Measurement
             foreach ($municipios as $municipio) {
-                $faker = Faker::create();
-                Measurement::create([
+                $measurementData[] = [
                     'CODIGOINE' => $municipio->CODIGOINE,
                     'ID_REL' => $municipio->ID_REL,
                     'COD_GEO' => $municipio->COD_GEO,
@@ -55,19 +53,17 @@ class DatabaseSeeder extends Seeder
                     'ORIGEN_ALTITUD' => $municipio->ORIGEN_ALTITUD,
                     'DISCREPANTE_INE' => $municipio->DISCREPANTE_INE,
                     // Otros campos de Measurement
-                    'humedad_relativa' => $faker->numberBetween(0, 10),
-                    'orto' => "08:24",
-                    'ocaso' => "18:24",
-                    'precipitacion' => $faker->numberBetween(0, 100),
-                    'temperatura_min' => $faker->numberBetween(-10, 10),
-                    'temperatura_max' => $faker->numberBetween(0, 30),
+                    'humedad_relativa' => $this->faker->randomNumber(),
+                    'orto' => $this->faker->word,
+                    'ocaso' => $this->faker->word,
+                    'precipitacion' => $this->faker->randomNumber(),
+                    'temperatura_min' => $this->faker->randomNumber(),
+                    'temperatura_max' => $this->faker->randomNumber(),
                     // La fecha actual en formato de fecha y hora
                     'fecha' => $fecha->toDateTimeString(),
                     'created_at' => now(),
                     'updated_at' => now(),
-                ]);
-                
-                Log::info( "measurement inserta :   ".$municipio->NOMBRE.", fecha :  ".$fecha->toDateTimeString());
+                ];
             }
 
             // Avanzar al siguiente día

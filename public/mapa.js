@@ -48,11 +48,23 @@ function generarMapa() {
                 // Guardar la cadena JSON en el almacenamiento de sesión
                 sessionStorage.setItem('municipios', municipiosJSON);
 
+
+                // Llamar a la función para generar el formulario
+
+                if (typeof generarGrafico === 'function') {
+                    generarGrafico();
+                } else {
+
+                    console.error("La función generarGrafico no está definida.");
+                }
+
+
                 dataMunicipios.forEach(municipio => {
 
 
                     // Crear una nueva carta
                     let nuevaCarta = document.createElement('div');
+                    nuevaCarta.setAttribute("id", municipio.NOMBRE)
                     nuevaCarta.classList.add('cartas'); // Agregar la clase cartas
 
                     // Contenido de la carta
@@ -84,13 +96,13 @@ function generarMapa() {
                     parrafo.textContent = 'Temperatura Máxima: ' + municipio.temperatura_max;
                     contenido.appendChild(parrafo);
 
-                    descricion = document.createElement('p');
+                    descripcion = document.createElement('p');
 
 
                     // Agregar elementos a la carta
                     nuevaCarta.appendChild(titulo);
                     nuevaCarta.appendChild(contenido);
-                    nuevaCarta.appendChild(descricion);
+                    nuevaCarta.appendChild(descripcion);
                     // Asignar eventos de arrastre y soltado a la carta
                     nuevaCarta.setAttribute('draggable', true);
                     nuevaCarta.addEventListener('dragstart', comenzarArrastre);
@@ -119,23 +131,23 @@ function generarMapa() {
                         fechaManana = new Date;
                         fechaAyer.setDate(fechaAyer.getDate() - 1);
                         fechaManana.setDate(fechaManana.getDate() + 1);
-                        let zone ="";
+                        let zone = "";
                         switch (municipio.NOMBRE_PROVINCIA) {
                             case "Gipuzkoa":
-                                zone ="donostialdea";
+                                zone = "donostialdea";
                                 break;
                             case "Bizkaia":
-                                zone ="cantabrian_mountains"
+                                zone = "cantabrian_mountains"
                                 break;
                             case "Araba/Álava":
-                                zone ="ebro_valley";
+                                zone = "ebro_valley";
                                 break;
 
                             default:
                                 break;
                         }
 
-                        fetch(`https://api.euskadi.eus/euskalmet/weather/regions/basque_country/zones/`+zone+`/forecast/at/` + formatoFecha1(fechaAyer) + `/for/` + formatoFecha2(fechaManana), options)
+                        fetch(`https://api.euskadi.eus/euskalmet/weather/regions/basque_country/zones/` + zone + `/forecast/at/` + formatoFecha1(fechaAyer) + `/for/` + formatoFecha2(fechaManana), options)
                             .then(response => {
                                 if (!response.ok) {
                                     throw new Error("La solicitud meteorológica no se pudo completar correctamente.");
@@ -151,9 +163,9 @@ function generarMapa() {
                                 dataMeteo = JSON.parse(text);
 
                                 console.log(municipio);
-                                descricion.textContent = dataMeteo.forecastTextByLang.SPANISH;
-                                descricion.setAttribute('id', 'descricion');
-                                nuevaCarta.appendChild(descricion);
+                                descripcion.textContent = dataMeteo.forecastTextByLang.SPANISH;
+                                descripcion.setAttribute('id', 'descripcion');
+                                nuevaCarta.appendChild(descripcion);
                                 marker.bindPopup(nuevaCarta); //Abiertos
 
                             })
@@ -197,7 +209,7 @@ function generarLogout() {
     let botonCerarSesion = document.createElement("button");
     botonCerarSesion.setAttribute('id', 'botonRGST-LGN');
     // Establecer el texto del botón
-    botonCerarSesion.innerText = "CERAR SESION";
+    botonCerarSesion.innerText = "CERRAR SESION";
     botonCerarSesion.onclick = function () {
         // Llamar a la función definida en login.js
         if (typeof cerrarSesion === 'function') {
@@ -218,13 +230,23 @@ function generarEspacioCartas() {
     // Crear el elemento div que tendra el mapa
     var espacioCartas = document.createElement('div');
 
+    var botonBorrar = document.createElement("button");
+    botonBorrar.setAttribute("id", "botonBorrar")
+    botonBorrar.onclick = function () {
+
+        var cartas = document.querySelectorAll(".cartas");
+        cartas.forEach(function (carta) {
+            carta.remove();
+        });
+    };
+    botonBorrar.textContent = "🗑";
     // Establecer los atributos del div
     espacioCartas.id = 'espacioCartas';
 
-
+    espacioCartas.appendChild(botonBorrar);
     // Agregar el div al cuerpo de la página
     document.body.appendChild(espacioCartas);
-
+    actualizarcartas();
     //eventos 
     espacioCartas.addEventListener('dragover', function (evento) {
         evento.preventDefault(); // Permitir soltar la carta
@@ -249,4 +271,105 @@ function soltarCarta(evento) {
     var espacioCartas = document.getElementById('espacioCartas');
     espacioCartas.appendChild(evento.currentTarget);
     evento.preventDefault(); // Evitar comportamiento predeterminado del navegador
+}
+
+function actualizarcartas() {
+    //si existe carta actualiza us datos
+    var urlActual = (new URL(window.location.origin)).hostname;
+    let token = sessionStorage.getItem('accessToken');
+    setInterval(() => {
+
+        fetch("http://" + urlActual + ":8082/api/auth/municipios", {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + token,
+                "Accept": "application/json; charset=UTF-8"
+
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("La solicitud no se pudo completar correctamente.");
+                }
+                return response.json();
+            })
+            .then(dataMunicipios => {
+                // Convertir el array de provincias a cadena JSON
+                var municipiosJSON = JSON.stringify(dataMunicipios);
+
+                // Guardar la cadena JSON en el almacenamiento de sesión
+                sessionStorage.setItem('municipios', municipiosJSON);
+                //por cada dato busca carta
+                dataMunicipios.forEach(municipio => {
+                    try {
+
+
+                        if (document.getElementById(municipio.NOMBRE) !== null) {
+
+
+                            let nuevaCarta = document.getElementById(municipio.NOMBRE);
+
+                            console.log("municipio.NOMBRE  " + municipio.NOMBRE);
+                            console.log("nuevaCarta  " + nuevaCarta.innerHTML);
+
+                            var partes = nuevaCarta.innerHTML.split('<p id="descripcion">');
+
+                            // Verificar si la cadena se dividió correctamente y tiene al menos dos partes
+                            if (partes.length >= 2) {
+                                // Obtener la segunda parte y dividirla usando ']' como delimitador
+                                var descripcionText = partes[1].split('</p>')[0];
+                            }
+                                //borrar contenido
+                                nuevaCarta.innerHTML = "";
+
+
+                                // Contenido de la carta
+                                let titulo = document.createElement('h2');
+                                titulo.textContent = municipio.NOMBRE;
+
+                                let contenido = document.createElement('div');
+                                let parrafo = document.createElement('p');
+                                parrafo.textContent = 'Humedad Relativa: ' + municipio.humedad_relativa;
+                                contenido.appendChild(parrafo);
+
+                                parrafo = document.createElement('p');
+                                parrafo.textContent = 'Orto: ' + municipio.orto;
+                                contenido.appendChild(parrafo);
+
+                                parrafo = document.createElement('p');
+                                parrafo.textContent = 'Ocaso: ' + municipio.ocaso;
+                                contenido.appendChild(parrafo);
+
+                                parrafo = document.createElement('p');
+                                parrafo.textContent = 'Precipitación: ' + municipio.precipitacion;
+                                contenido.appendChild(parrafo);
+
+                                parrafo = document.createElement('p');
+                                parrafo.textContent = 'Temperatura Mínima: ' + municipio.temperatura_min;
+                                contenido.appendChild(parrafo);
+
+                                parrafo = document.createElement('p');
+                                parrafo.textContent = 'Temperatura Máxima: ' + municipio.temperatura_max;
+                                contenido.appendChild(parrafo);
+
+                                descripcion = document.createElement('p');
+                                descripcion.textContent = descripcionText;
+                                descripcion.setAttribute('id', 'descripcion');
+
+                                // Agregar elementos a la carta
+                                nuevaCarta.appendChild(titulo);
+                                nuevaCarta.appendChild(contenido);
+                                nuevaCarta.appendChild(descripcion);
+
+                            }
+
+                        } catch (error) {
+                            console.log(error);
+                        }
+                    });
+
+            });
+    }, 2000);
+
+
 }

@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\MunicipioController;
+use App\Http\Controllers\MeasurementController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -23,7 +24,7 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('login', [AuthController::class, 'login'])->name('login');
     Route::post('signup', [AuthController::class, 'signUp']);
     Route::get('/municipios', [MunicipioController::class, 'index']);
-
+    Route::get('/measurements', [MeasurementController::class, 'filterBetweenData']);
 
     Route::group(['middleware' => 'auth:api'], function() {
         Route::get('logout', [AuthController::class, 'logout']);

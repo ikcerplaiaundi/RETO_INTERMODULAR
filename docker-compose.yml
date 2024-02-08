@@ -56,7 +56,7 @@ services:
     depends_on:
      - mysql
      - laravel-app
-    command: php artisan schedule:work
+    command: ["sh", "-c", "php artisan app:consultar-api-externa && php artisan schedule:work"]
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
