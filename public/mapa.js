@@ -262,6 +262,7 @@ function generarEspacioCartas() {
         cartas.forEach(function (carta) {
             carta.remove();
         });
+        localStorage.removeItem('cartasGuardadas');
     };
     botonBorrar.textContent = "🗑";
     // Establecer los atributos del div
@@ -560,8 +561,8 @@ function generarAyuda() {
 
         // Establecer estilos para el texto de ayuda
         textoAyuda2.style.position = 'fixed';
-        textoAyuda2.style.top = '71vh';
-        textoAyuda2.style.right = '65vw';
+        textoAyuda2.style.top = '73vh';
+        textoAyuda2.style.right = '55vw';
         textoAyuda2.id = "ayuda"
         textoAyuda2.style.padding = '5px'; // Añade un poco de espacio alrededor del texto
         textoAyuda2.style.zIndex = '1000'; // Establecer el z-index a 1000
