@@ -21,17 +21,20 @@ function generarGrafico() {
 
     // Crear selector desplegable
     var selectorLabel = document.createElement('label');
-    selectorLabel.textContent = 'Selecciona:';
+    selectorLabel.textContent = 'MUNICIPIO:';
     var selector = document.createElement('select');
     selector.setAttribute('name', 'selector');
 
     // Opciones del selector
     var option1 = document.createElement('option');
-    option1.textContent = 'Opción 1';
+    option1.textContent = 'Araba';
+    var option2 = document.createElement('option');
+    option2.textContent = 'Irun';
 
 
     // Agregar opciones al selector
     selector.appendChild(option1);
+    selector.appendChild(option2);
 
 
     // Crear botón

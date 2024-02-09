@@ -41,7 +41,7 @@ function generarMapa() {
 
     setTimeout(() => {
         //mapa y peticiones
-        var map = L.map('mapid').setView([43.34567, -1.79690], 8);
+        var map = L.map('mapid').setView([43.2147, -2.2282], 10);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
